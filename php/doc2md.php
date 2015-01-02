@@ -306,7 +306,7 @@ class Html2md {
 			}
 		}
 
-		if(preg_match_all('/<div[^>]*id="([^"]+?)"[^>]*?>/i',$html,$matchs)){
+		if(preg_match_all('/<div[^>]*class="([^"]+?)"[^>]*?>/i',$html,$matchs)){
 			foreach($matchs[1] as $i=> $id){
 						$id=trim($id);
 						array_push($ids,'.'.preg_replace('/\s+/',',.',$id));
