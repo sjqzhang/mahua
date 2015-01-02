@@ -1,6 +1,7 @@
 <?php
 
 require_once(dirname(__FILE__).'/phpQuery.php');
+require_once(dirname(__FILE__).'/Snoopy.class.php');
 
 
 
@@ -201,12 +202,12 @@ class Html2md {
 
 		$content='';
 		if(substr($url,0,4)=='http'){
-			$content=file_get_contents($url);
-			//$snoopy=new Snoopy();
-			//$snoopy->agent = "Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0 FirePHP/0.7.4";
-			//$snoopy->referer = $url;
-			//$snoopy->fetch($url);
-			//$content=$snoopy->results;
+			//$content=file_get_contents($url);
+			$snoopy=new Snoopy();
+			$snoopy->agent = "Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0 FirePHP/0.7.4";
+			$snoopy->referer = $url;
+			$snoopy->fetch($url);
+			$content=$snoopy->results;
 			if(empty($content)) {
 				echo "html is empty\n";die;
 			}
@@ -302,7 +303,7 @@ class Html2md {
 		$ids=array();
 		if(preg_match_all('/<div[^>]*id="([^"]+?)"[^>]*?>/i',$html,$matchs)){
 			foreach($matchs[1] as $i=> $id){
-						array_push($ids,'#'.$id);
+						array_push($ids,'#'.trim($id));
 			}
 		}
 
@@ -312,7 +313,7 @@ class Html2md {
 						array_push($ids,'.'.preg_replace('/\s+/',',.',$id));
 			}
 		}
-		return $ids;
+		return array_unique($ids);
 	}
 }
 
