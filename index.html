@@ -10,8 +10,22 @@
     <link rel="shortcut icon" href="favicon.png" type="image/vnd.microsoft.icon" />
 </head>
 <body>
-	<div>URL:<input type="text" id="url" style="width:450px;"/> <input type="button" id="btnLoad" value="Load" /></div>
+
+
+
+
     <div class="mahua-container">
+	
+	<div>URL:<input type="text" id="url" style="width:450px;"/>
+			<select  id="selector" name="selector" >
+				<option value="body">body</option>
+			</select>
+			<input type="checkbox" name="istable" id="istable">表格
+			
+			<input type="button" id="btnLoad" value="Load" />
+
+	</div>
+	
         <div id="mahua-docname" class="mahua-docanme"></div>
         <ul class="mahua-topbar" id="mahua-topbar">
           <li class="mahua-github" id="mahua-github"><a href="https://github.com/jserme/mahua" target="_blank"><img src="./github.png" /></a></li>
@@ -95,6 +109,7 @@
         </div>
         <div class="mahua-spliter" id="mahua-spliter"></div>
         <div class="mahua-left">
+			
             <div id="mahua-editor" style="height:100%;width:50%;"></div>
         </div>
         <div class="mahua-right" id="mahua-result"> </div>
@@ -109,10 +124,27 @@
 
 	     $('#btnLoad').click(function(){
 		 
-		      var url=$('#url').val()
-			  $.post('info.php',{url:url},function(md){
+		      var url=$('#url').val();
+			  var selector=$('#selector').val()
+			  var istable=$('#istable').attr('checked')?1:0;
+			  $.post('info.php',{url:url,selector:selector,istable:istable},function(md){
 			  
-			    editor.setValue(md);
+			    var data= eval('('+md+')');
+			    editor.setValue(data.md);
+
+				var html="";
+				var flag=false;
+				for(var op in data.selector){
+					if(data.selector[op]==selector){
+						flag=true;
+					}
+					html+='<option value="'+data.selector[op]+'" >'+	data.selector[op] +'</option>';
+				}
+
+					
+                if(!flag){
+					$('#selector').html(html);
+				}
 			  
 			  }) 
 		 
