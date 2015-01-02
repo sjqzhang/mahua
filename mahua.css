@@ -60,6 +60,10 @@ body{
 .mahua-session{
     background:url('./session.png') no-repeat;
 }
+
+.mahua-vision{
+    background:url('./vision.png') no-repeat;
+}
 .mahua-donate-detail td{
     text-align:right;
 }

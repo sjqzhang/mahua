@@ -16,7 +16,7 @@
 
     <div class="mahua-container">
 	
-	<div>URL:<input type="text" id="url" style="width:450px;"/>
+	<div id="inputBar" style="display:none;">URL:<input type="text" id="url" style="width:450px;"/>
 			<select  style="width:80px;" id="selector" name="selector" >
 				<option value="body">body</option>
 			</select>
@@ -32,10 +32,13 @@
 
 	</div>
 	
-        <div id="mahua-docname" class="mahua-docanme"></div>
+        <div id="mahua-docname" class="mahua-docanme" style="display:none;"></div>
         <ul class="mahua-topbar" id="mahua-topbar">
-          <li class="mahua-github" id="mahua-github"><a href="https://github.com/jserme/mahua" target="_blank"><img src="./github.png" /></a></li>
-            <li class="mahua-config" id="mahua-config"></li>
+			<li class="mahua-vision" id="mahua-vision"></li>
+			<!--
+            <li class="mahua-github" id="mahua-github"><a href="https://github.com/jserme/mahua" target="_blank"><img src="./github.png" /></a></li>
+            -->
+			<li class="mahua-config" id="mahua-config"></li>
             <li class="mahua-session" id="mahua-session"></li>
         </ul>
         <div class="mahua-toolbar" style="display:none" id="mahua-toolbar">
@@ -173,7 +176,14 @@
 			  
 			  }) 
 		 
-		 })
+		 })//end click;
+
+
+		 $('#mahua-vision').click(function(){
+		 
+			$('#inputBar').toggle();
+
+		 })//end click
 
 
         })();

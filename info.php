@@ -41,8 +41,8 @@ if($action=='load'){
 
 } else {
 
-	if(!is_dir($filepath)){
-		mkdirs($filepath);
+	if(!is_dir(dirname($filename))){
+		mkdirs(dirname($filename));
 	}
 
 	$filename=$_POST['filename'];
