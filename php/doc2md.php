@@ -15,6 +15,12 @@ class Html2md {
 			}
 		}
 
+		function h2md($match){
+			print_r(match);die;
+			$h=trim($match[1]);
+			return "\r\n#### ".$h;
+		}
+
 		function url2md($match){
 			if( preg_match('/href=[\"\'](.*?)[\'\"]/',$match[0],$match2)) {
 				if(strpos($match[0],'javascript')==0){
@@ -62,22 +68,26 @@ class Html2md {
 	
 		
 		
-		$markup= preg_replace('/[\r\n]*/i',"",$markup);
+		
 		$markup= preg_replace('/<script[^>]*?>[\s\S]*?<\/script>/i',"",$markup);
 		$markup= preg_replace('/<a\s+[^>]*javascript*?>[\s\S]*?<\/a>/i',"",$markup);
 		if($istable){
+			$markup= preg_replace('/[\r\n]*/i',"",$markup);
 			$markup= preg_replace_callback('/<table[^>]*?>[\s\S]*?<\/table>/i',array($this,'table2md'),$markup);
 		}
+		/*
 		$markup= preg_replace('/<br\/?>|<br\s*\/>/i',"\r\n",$markup);
 		$markup= preg_replace('/<\/li>/i',"</li>\r\n",$markup);
 		$markup= preg_replace('/<\/p>/i',"</p>\r\n\r\n",$markup);
 		$markup= preg_replace('/<\/div>/i',"</div>\r\n",$markup);
+		*/
 
 		//echo $markup;die;
 		/*$markup= preg_replace('/<pre[^>]*?>[\s\S]*?<\/pre>/i',"\r\n```\r\n$0\r\n```\r\n",$markup);
 		$markup= preg_replace('/<blockquote[^>]*?>[\s\S]*?<\/blockquote>/i',"\r\n```\r\n$0\r\n```\r\n",$markup);
 		*/
 		$markup= preg_replace_callback('/<img[^>]+?>/i', array($this,'img2md'),$markup);
+		$markup= preg_replace_callback('/<h\d[^>]+?>([\s\S]+?)<\/h\d>/i', array($this,'h2md'),$markup);
 		$markup= preg_replace_callback('/<a\s+[^>]+?>([\s\S]*?)<\/a>/i',array($this, 'url2md'),$markup);
 		
 
@@ -97,7 +107,7 @@ class Html2md {
 			'/&quot;/i',
 			'/<script[^>]*?>[\s\S]*?<\/script>/i',
 			'/<strong[^>]*?>[\s\S]*?<\/strong>/i',
-			'/<h\d[^>]*?>[\s\S]*?<\/h\d>/i',
+		
 			),array(
 			"\r\n```\r\n$0\r\n```\r\n",
 			"\r\n```\r\n$0\r\n```\r\n",
@@ -110,8 +120,8 @@ class Html2md {
 			">",
 			'"',
 			"",
-			"\r\n\r\n####$0\r\n\r\n",
-			"\r\n\r\n####$0\r\n\r\n",
+			"\r\n\r\n#### $0\r\n\r\n",
+		
 			),$markup);
 			
 			
@@ -273,6 +283,15 @@ class Html2md {
 		$content=  preg_replace('/<head[^>]*?>/','<head>',$content);
 		return $content;
 	}
+
+	function get_title($html){
+		if( preg_match('/<title[^>]*?>([\s\S]*?)<\/title>/i',$html,$title)){
+			return trim($title[1]);
+		} else {
+			return "untitled";
+		}
+	}
+
 
 	function get_container($html){
 		$ids=array();

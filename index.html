@@ -24,6 +24,12 @@
 			
 			<input type="button" id="btnLoad" value="Load" />
 
+			File Path:<input type="text" id="filename" style="width:450px;"/>
+
+			<input type="button" id="btnSave" value="Save" />
+
+			<span id="msg"></span>
+
 	</div>
 	
         <div id="mahua-docname" class="mahua-docanme"></div>
@@ -127,10 +133,12 @@
 		      var url=$('#url').val();
 			  var selector=$('#selector').val()
 			  var istable=$('#istable').attr('checked')?1:0;
-			  $.post('info.php',{url:url,selector:selector,istable:istable},function(md){
+			  $.post('info.php',{url:url,selector:selector,istable:istable,action:'load'},function(md){
 			  
 			    var data= eval('('+md+')');
 			    editor.setValue(data.md);
+
+				$('#filename').val(data.title);
 
 				var html="";
 				var flag=false;
@@ -145,6 +153,23 @@
                 if(!flag){
 					$('#selector').html(html);
 				}
+			  
+			  }) 
+		 
+		 })
+
+
+		   $('#btnSave').click(function(){
+		 
+		      var filename=$('#filename').val();
+			  var md=editor.getValue();
+			  $.post('info.php',{filename:filename+".md",md:md,action:'save'},function(result){
+			  
+			       if(result==1){
+					  $('#msg').html('<font color="green">保存成功！</font>');
+				   } else {
+					   $('#msg').html('<font color="red">保存失败！</font>');
+				   }
 			  
 			  }) 
 		 
