@@ -16,7 +16,6 @@ class Html2md {
 		}
 
 		function h2md($match){
-			print_r(match);die;
 			$h=trim($match[1]);
 			return "\r\n#### ".$h;
 		}
@@ -87,11 +86,14 @@ class Html2md {
 		$markup= preg_replace('/<blockquote[^>]*?>[\s\S]*?<\/blockquote>/i',"\r\n```\r\n$0\r\n```\r\n",$markup);
 		*/
 		$markup= preg_replace_callback('/<img[^>]+?>/i', array($this,'img2md'),$markup);
-		$markup= preg_replace_callback('/<h\d[^>]+?>([\s\S]+?)<\/h\d>/i', array($this,'h2md'),$markup);
+
+		
+
+		$markup= preg_replace_callback('/<h\d>([\s\S]*?)<\/h\d>/i', array($this,'h2md'),$markup);
 		$markup= preg_replace_callback('/<a\s+[^>]+?>([\s\S]*?)<\/a>/i',array($this, 'url2md'),$markup);
 		
 
-		//$markup= preg_replace('/(\r\n){2,}/i',"\n",$markup);
+		
  
         
 		$markup= preg_replace(array(
@@ -107,6 +109,7 @@ class Html2md {
 			'/&quot;/i',
 			'/<script[^>]*?>[\s\S]*?<\/script>/i',
 			'/<strong[^>]*?>[\s\S]*?<\/strong>/i',
+			'/<!--[\s\S]*?-->/'
 		
 			),array(
 			"\r\n```\r\n$0\r\n```\r\n",
@@ -121,11 +124,12 @@ class Html2md {
 			'"',
 			"",
 			"\r\n\r\n#### $0\r\n\r\n",
+			"",
 		
 			),$markup);
 			
+
 			
-           
 
 		
 
@@ -286,7 +290,8 @@ class Html2md {
 
 	function get_title($html){
 		if( preg_match('/<title[^>]*?>([\s\S]*?)<\/title>/i',$html,$title)){
-			return trim($title[1]);
+			$title= trim($title[1]);
+			return preg_replace('/[:\.><?*\/]/','',$title);
 		} else {
 			return "untitled";
 		}

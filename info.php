@@ -48,6 +48,10 @@ if($action=='load'){
 	$filename=$_POST['filename'];
 	$md=$_POST['md'];
 
+	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+		$filename=iconv('utf-8//IGNORE','gbk//IGNORE',$filename);
+	} 
+
 	if(!file_exists($filename)){
 		$fp=fopen($filename,'w');
 		fwrite($fp,$md);
