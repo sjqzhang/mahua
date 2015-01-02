@@ -68,11 +68,11 @@ class Html2md {
 	
 		
 		
-		
+		$markup= preg_replace('/[\r\n]*/i',"",$markup);
 		$markup= preg_replace('/<script[^>]*?>[\s\S]*?<\/script>/i',"",$markup);
 		$markup= preg_replace('/<a\s+[^>]*javascript*?>[\s\S]*?<\/a>/i',"",$markup);
 		if($istable){
-			$markup= preg_replace('/[\r\n]*/i',"",$markup);
+			
 			$markup= preg_replace_callback('/<table[^>]*?>[\s\S]*?<\/table>/i',array($this,'table2md'),$markup);
 		}
 		/*
@@ -115,7 +115,7 @@ class Html2md {
 			),array(
 			"\r\n```\r\n$0\r\n```\r\n",
 			"\r\n```\r\n$0\r\n```\r\n",
-			"\r\n",
+			"\r\n\r\n",
 			"</li>\r\n",
 			"</p>\r\n\r\n",
 			"</div>\r\n",
@@ -132,7 +132,7 @@ class Html2md {
 
 			
 
-		
+		$markup= preg_replace('/^([\r\n]){2,}/im',"\n",$markup);
 
 		 $markup= preg_replace('/<\w+[^>]*?>|<\/\w+>/i',"",$markup);
 
