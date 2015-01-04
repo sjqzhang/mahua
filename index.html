@@ -15,13 +15,13 @@
 
 
     <div class="mahua-container">
-	
-	<div id="inputBar" style="display:none;">URL:<input type="text" id="url" style="width:450px;"/>
+
+	<div id="inputBar" style="display:block;">URL:<input type="text" id="url" style="width:450px;"/>
 			<select  style="width:80px;" id="selector" name="selector" >
 				<option value="body">body</option>
 			</select>
 			<input type="checkbox" name="istable" id="istable">表格
-			
+
 			<input type="button" id="btnLoad" value="Load" />
 
 			File Path:<input type="text" id="filename" style="width:450px;"/>
@@ -31,7 +31,7 @@
 			<span id="msg"></span>
 
 	</div>
-	
+
         <div id="mahua-docname" class="mahua-docanme" style="display:none;"></div>
         <ul class="mahua-topbar" id="mahua-topbar">
 			<li class="mahua-vision" id="mahua-vision"></li>
@@ -44,16 +44,16 @@
         <div class="mahua-toolbar" style="display:none" id="mahua-toolbar">
             <table cellspacing="0">
                 <tr>
-                    <td> 
+                    <td>
                         <label for="mahua-changeSession">选择文档</label>
                     </td>
                     <td>
-                        <select id="mahua-changeSession" name=""> </select> 
+                        <select id="mahua-changeSession" name=""> </select>
                         <a href="javascript:;" id="mahua-removeSession">删除</a>
                     </td>
                 </tr>
                 <tr>
-                    <td> 
+                    <td>
                         <label for="mahua-editorThemes">编辑器主题</label>
                     </td>
                     <td>
@@ -118,7 +118,7 @@
         </div>
         <div class="mahua-spliter" id="mahua-spliter"></div>
         <div class="mahua-left">
-			
+
             <div id="mahua-editor" style="height:100%;width:50%;"></div>
         </div>
         <div class="mahua-right" id="mahua-result"> </div>
@@ -127,19 +127,25 @@
     <script type="text/javascript" src="ace/keybinding-vim.js"></script>
     <script type="text/javascript" src="all.js?v=5"></script>
     <script type="text/javascript">
-        (function() {
-       
+
+
+        $(document).ready(function(){
+
 
 
 	     $('#btnLoad').click(function(){
-		 
+
 		      var url=$('#url').val();
 			  var selector=$('#selector').val()
 			  var istable=$('#istable').attr('checked')?1:0;
+			    $('#msg').html('<font color="green">加载中..！</font>');
 			  $.post('info.php',{url:url,selector:selector,istable:istable,action:'load'},function(md){
-			  
+
+			    $('#msg').hide();
+
 			    var data= eval('('+md+')');
-			    editor.setValue(data.md);
+                var md= data.md;
+			    editor.setValue(md);
 
 				$('#filename').val(data.title);
 
@@ -152,41 +158,43 @@
 					html+='<option value="'+data.selector[op]+'" >'+	data.selector[op] +'</option>';
 				}
 
-					
+
                 if(!flag){
 					$('#selector').html(html);
 				}
-			  
-			  }) 
-		 
+
+			  })
+
 		 })
 
 
 		   $('#btnSave').click(function(){
-		 
+
 		      var filename=$('#filename').val();
 			  var md=editor.getValue();
 			  $.post('info.php',{filename:filename+".md",md:md,action:'save'},function(result){
-			  
+
 			       if(result==1){
 					  $('#msg').html('<font color="green">保存成功！</font>');
 				   } else {
 					   $('#msg').html('<font color="red">保存失败！</font>');
 				   }
-			  
-			  }) 
-		 
+
+			  })
+
 		 })//end click;
 
 
 		 $('#mahua-vision').click(function(){
-		 
+
 			$('#inputBar').toggle();
 
-		 })//end click
+            })//end click
 
 
-        })();
+        });
+
+
     </script>
 </body>
 </html>

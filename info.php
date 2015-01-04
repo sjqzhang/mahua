@@ -5,23 +5,23 @@
 require_once('php/doc2md.php');
 
 
-function mkdirs($dir){ 
-	return is_dir($dir) or (mkdirs(dirname($dir)) and mkdir($dir,0777)); 
+function mkdirs($dir){
+	return is_dir($dir) or (mkdirs(dirname($dir)) and mkdir($dir,0777));
 }
 
 
 $h2md=new Html2md();
 
 
-$action= $_POST['action'];
+$action= $_REQUEST['action'];
 
-$filepath='/var/www/';
+$filepath='/var/www/webtech/doc/';
 
 if($action=='load'){
 
-	$html=$h2md->url_get($_POST['url']);
-	$selector=$_POST['selector'];
-	$istable=$_POST['istable'];
+	$html=$h2md->url_get($_REQUEST['url']);
+	$selector=$_REQUEST['selector'];
+	$istable=$_REQUEST['istable'];
 
 	$title=$h2md->get_title($html);
 
@@ -35,22 +35,22 @@ if($action=='load'){
 
 	//print_r($selector);
 
-	
+
 
 	echo json_encode(array('md'=>$md,'selector'=>$options,'title'=>$filepath.$title));
 
 } else {
 
+	$filename=$_REQUEST['filename'];
 	if(!is_dir(dirname($filename))){
 		mkdirs(dirname($filename));
 	}
 
-	$filename=$_POST['filename'];
-	$md=$_POST['md'];
+	$md=$_REQUEST['md'];
 
 	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
 		$filename=iconv('utf-8//IGNORE','gbk//IGNORE',$filename);
-	} 
+	}
 
 	if(!file_exists($filename)){
 		$fp=fopen($filename,'w');
@@ -60,7 +60,7 @@ if($action=='load'){
 	} else {
 		echo 0;
 	}
-	
+
 
 }
 

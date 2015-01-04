@@ -23,10 +23,7 @@ class Html2md {
 
 		function url2md($match){
 			if( preg_match('/href=[\"\'](.*?)[\'\"]/',$match[0],$match2)) {
-				if(strpos($match[0],'javascript')==0){
-					return '';
-				}
-				return preg_replace('/href=[\"\'](.*?)[\'\"]/',"[{$match[1]}]($1)", $match2[0]);
+                return '['. $match[1] .']('. $match2[1] .')';
 			} else {
 				return $match[0];
 			}
@@ -65,14 +62,14 @@ class Html2md {
 
 	function parse($markup,$istable=true){
 
-	
-		
-		
-		$markup= preg_replace('/[\r\n]*/i',"",$markup);
+
+
+
 		$markup= preg_replace('/<script[^>]*?>[\s\S]*?<\/script>/i',"",$markup);
 		$markup= preg_replace('/<a\s+[^>]*javascript*?>[\s\S]*?<\/a>/i',"",$markup);
 		if($istable){
-			
+
+		   // $markup= preg_replace('/[\r\n]*/i',"",$markup);
 			$markup= preg_replace_callback('/<table[^>]*?>[\s\S]*?<\/table>/i',array($this,'table2md'),$markup);
 		}
 		/*
@@ -88,15 +85,16 @@ class Html2md {
 		*/
 		$markup= preg_replace_callback('/<img[^>]+?>/i', array($this,'img2md'),$markup);
 
-		
+
 
 		$markup= preg_replace_callback('/<h\d>([\s\S]*?)<\/h\d>/i', array($this,'h2md'),$markup);
-		$markup= preg_replace_callback('/<a\s+[^>]+?>([\s\S]*?)<\/a>/i',array($this, 'url2md'),$markup);
-		
+		$markup= preg_replace_callback('/<a\s+[^>]+?>([\s\S]*?)<\/a>/im',array($this, 'url2md'),$markup);
 
-		
- 
-        
+
+
+        //error_log($markup,3,'/var/www/mahua/log');
+
+
 		$markup= preg_replace(array(
 			'/<pre[^>]*?>[\s\S]*?<\/pre>/i',
 			'/<blockquote[^>]*?>[\s\S]*?<\/blockquote>/i',
@@ -111,14 +109,14 @@ class Html2md {
 			'/<script[^>]*?>[\s\S]*?<\/script>/i',
 			'/<strong[^>]*?>[\s\S]*?<\/strong>/i',
 			'/<!--[\s\S]*?-->/'
-		
+
 			),array(
 			"\r\n```\r\n$0\r\n```\r\n",
 			"\r\n```\r\n$0\r\n```\r\n",
 			"\r\n\r\n",
 			"</li>\r\n",
 			"</p>\r\n\r\n",
-			"</div>\r\n",
+			"</div>\r\n\r\n",
 			" ",
 			"<",
 			">",
@@ -126,19 +124,19 @@ class Html2md {
 			"",
 			"\r\n\r\n#### $0\r\n\r\n",
 			"",
-		
+
 			),$markup);
-			
 
-			
 
-		$markup= preg_replace('/^([\r\n]){2,}/im',"\n",$markup);
+
+
+
 
 		 $markup= preg_replace('/<\w+[^>]*?>|<\/\w+>/i',"",$markup);
 
-		
+		 // $markup= preg_replace('/^[\r\n]${3,}/i',"xx",$markup);
+
 		return $markup;
-		return '<pre>'.$markup.'</pre>';
 
 	}
 
@@ -203,11 +201,20 @@ class Html2md {
 		$content='';
 		if(substr($url,0,4)=='http'){
 			//$content=file_get_contents($url);
-			$snoopy=new Snoopy();
-			$snoopy->agent = "Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0 FirePHP/0.7.4";
-			$snoopy->referer = $url;
-			$snoopy->fetch($url);
-			$content=$snoopy->results;
+            $uname= php_uname();
+            if(preg_match('/linux/i',$uname)){
+
+               $content=  shell_exec("curl '$url' -o-");
+
+                //error_log($content,3,'/var/www/mahua/log');
+
+            } else {
+			    $snoopy=new Snoopy();
+			    $snoopy->agent = "Mozilla/5.0 (X11; Linux x86_64; rv:29.0) Gecko/20100101 Firefox/29.0 FirePHP/0.7.4";
+			    $snoopy->referer = $url;
+			    $snoopy->fetch($url);
+                $content=$snoopy->results;
+            }
 			if(empty($content)) {
 				echo "html is empty\n";die;
 			}
